@@ -12,12 +12,13 @@ static int moving, startx, starty;
 GLfloat angle = 0.0;   /* in degrees */
 GLfloat angle2 = 0.0;   /* in degrees */
 
-double vector[] = { 0.0,0.0,0.0 };
-double eye[] = { 0.0, 0.0, 7.0 };
-double center[] = { 0.0, 0.0, 0.0 };
-double look[] = { eye[0] - center[0], eye[1] - center[1],eye[2] - center[2] };
-double up[] = { 0.0, 1.0, 0.0 };
+double speed = 0.2;
 
+double eye[] = { 0, 0,-10 };
+double center[] = { 0, 0, 1 };
+double up[] = { 0, 1, 0 };
+
+double direction[3];
 
 void init(void)
 {
@@ -71,26 +72,25 @@ void rotatePoint(double a[], double theta, double p[])
 	p[2] = temp[2];
 }
 
+void SetDirection(double d[])
+{
+	d[0] = center[0] - eye[0];
+	d[1] = center[1] - eye[1];
+	d[2] = center[2] - eye[2];
+}
+
 void Left()
 {
 	// implement camera rotation arround vertical window screen axis to the left
 	// used by mouse and left arrow
-	double angle = 0.05;
-	double direction[] = { 0, 1, 0 };
-	rotatePoint(direction, angle, eye);
-
-
+	rotatePoint(up, 0.05, eye);
 }
 
 void Right()
 {
 	// implement camera rotation arround vertical window screen axis to the right
 	// used by mouse and right arrow
-
-	double angle = -0.05;
-	double direction[] = { 0, 1, 0 };
-	rotatePoint(direction, angle, eye);
-
+	rotatePoint(up, -0.05, eye);
 
 }
 
@@ -99,13 +99,16 @@ void Up()
 	// implement camera rotation arround horizontal window screen axis +ve
 	// used by up arrow
 
-	double angle = -0.05;
-	double look[] = { eye[0] - center[0], eye[1] - center[1],eye[2] - center[2] };
-
-	crossProduct(up, look, vector);
-	normalize(vector);
-	rotatePoint(vector, angle, eye);
-	rotatePoint(vector, angle, up);
+	double sub[3];
+	for (int i = 0; i < 3; i++)
+	{
+		sub[i] = center[i] - eye[i];
+	}
+	double cross[3];
+	crossProduct(sub, up, cross);
+	normalize(cross);
+	rotatePoint(cross, 0.05, eye);
+	rotatePoint(cross, 0.05, up);
 
 }
 
@@ -114,30 +117,29 @@ void Down()
 	// implement camera rotation arround horizontal window screen axis 
 	// used by down arrow
 
-	double angle = 0.05;
-	double look[] = { eye[0] - center[0], eye[1] - center[1],eye[2] - center[2] };
-
-
-	crossProduct(up, look, vector);
-	normalize(vector);
-	rotatePoint(vector, angle, eye);
-	rotatePoint(vector, angle, up);
+	double sub[3];
+	for (int i = 0; i < 3; i++)
+	{
+		sub[i] = center[i] - eye[i];
+	}
+	double cross[3];
+	crossProduct(sub, up, cross);
+	normalize(cross);
+	rotatePoint(cross, -0.05, eye);
+	rotatePoint(cross, -0.05, up);
 }
 
 void moveForward()
 {
 
-	double speed = 0.05;
-	double direction[3];
-	direction[0] = center[0] - eye[0];
-	direction[1] = center[1] - eye[1];
-	direction[2] = center[2] - eye[2];
-	normalize(direction);
+	SetDirection(direction);
 
 	eye[0] += direction[0] * speed;
+	eye[1] += direction[1] * speed;
 	eye[2] += direction[2] * speed;
 
 	center[0] += direction[0] * speed;
+	center[1] += direction[1] * speed;
 	center[2] += direction[2] * speed;
 
 }
@@ -145,21 +147,15 @@ void moveForward()
 void moveBack()
 {
 
-	double speed = -0.05;
-	double direction[3];
-	direction[0] = center[0] - eye[0];
-	direction[1] = center[1] - eye[1];
-	direction[2] = center[2] - eye[2];
+	SetDirection(direction);
 
-	normalize(direction);
+	eye[0] -= direction[0] * speed;
+	eye[1] -= direction[1] * speed;
+	eye[2] -= direction[2] * speed;
 
-
-	eye[0] += direction[0] * speed;
-	eye[2] += direction[2] * speed;
-
-	center[0] += direction[0] * speed;
-	center[2] += direction[2] * speed;
-
+	center[0] -= direction[0] * speed;
+	center[1] -= direction[1] * speed;
+	center[2] -= direction[2] * speed;
 }
 
 static void mouse(int button, int state, int x, int y)
@@ -191,7 +187,7 @@ static void motion(int x, int y)
 void Leg(static int Leg, static int Knee, static int Side, int i)
 {
 	glPushMatrix();
-		glColor3f(0.0f, 1.0f, 1.0f);
+		glColor3f(0.0f, 0.0f, 0.6f);
 		glTranslatef(0.0, -0.5, 0.0);
 		if (i == 0)             // for right leg
 		{
@@ -240,7 +236,7 @@ void Leg(static int Leg, static int Knee, static int Side, int i)
 void Arm(static int Shoulder, static int Elbow, static int ShoulderF, int i)
 {
 	glPushMatrix();
-		glColor3f(0.0f, 1.0f, 1.0f);
+		glColor3f(1.0f, 1.0f, 1.0f);
 		glTranslatef(0.75, 1.5, 0.0);
 		if (i == 0)                   // 0 For the Right Arm
 		{
@@ -355,10 +351,10 @@ void Arm(static int Shoulder, static int Elbow, static int ShoulderF, int i)
 void Chest(void)
 {
 	glPushMatrix();
-		glColor3f(0.0f, 1.0f, 1.0f);
+		glColor3f(1.0f, 0.5f, 0.0f);
 		glTranslatef(0.0, 0.5, 0.0);   //Chest
 		glScalef(1.0, 2.0, 0.5);
-		glutWireCube(1);
+		glutSolidCube(1);
 	glPopMatrix();
 
 }
@@ -384,7 +380,7 @@ void display(void)
 	gluLookAt(eye[0], eye[1], eye[2], center[0], center[1], center[2], up[0], up[1], up[2]);
 
 	glPushMatrix();
-		glRotatef(angle2, 0.0, 1.0, 0.0);
+		glRotatef(angle2, 1.0, 0.0, 0.0);
 		glRotatef(angle, 0.0, 1.0, 0.0);
 
 		glRotatef((GLfloat)Body, 0.0, 1.0, 0.0);
@@ -410,6 +406,15 @@ void display(void)
 		glPopMatrix();
 
 		Head();
+		
+		//Neck
+		glPushMatrix();
+		glTranslatef(0.0, 1.65, 0.0);
+		glColor3f(1.0, 1.0, 1.0);
+		glScalef(0.25, 0.25, 0.25);
+		glutWireCube(1.0);
+		glPopMatrix();
+
 		glutSwapBuffers();
 
 	glPopMatrix();
@@ -420,7 +425,7 @@ void reshape(int w, int h)
 	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(70.0, (GLfloat)w / (GLfloat)h, 1.0, 20.0);
+	gluPerspective(85.0, (GLfloat)w / (GLfloat)h, 1.0, 20.0);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glTranslatef(0.0, 0.0, -5.0);
