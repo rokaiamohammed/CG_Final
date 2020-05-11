@@ -19,6 +19,12 @@ double center[] = { 0, 0, 1 };
 double up[] = { 0, 1, 0 };
 
 double direction[3];
+GLfloat lightZeroPosition[] = { 10.0, 14.0, 10.0, 1.0 };
+GLfloat lightZeroColor[] = { 0.8, 1.0, 0.8, 1.0 }; /* green-tinted */
+GLfloat lightOnePosition[] = { -1.0, 1.0, 1.0, 0.0 };
+GLfloat lightOneColor[] = { 0.6, 0.3, 0.2, 1.0 }; /* red-tinted */
+GLdouble bodyWidth = 3.0;
+int useStencil = 0;  /* Initially, allow the artifacts. */
 
 void init(void)
 {
@@ -59,13 +65,13 @@ void rotatePoint(double a[], double theta, double p[])
 	temp[1] *= sin(theta);
 	temp[2] *= sin(theta);
 
-	temp[0] += (1 - cos(theta))*(a[0] * a[0] * p[0] + a[0] * a[1] * p[1] + a[0] * a[2] * p[2]);
-	temp[1] += (1 - cos(theta))*(a[0] * a[1] * p[0] + a[1] * a[1] * p[1] + a[1] * a[2] * p[2]);
-	temp[2] += (1 - cos(theta))*(a[0] * a[2] * p[0] + a[1] * a[2] * p[1] + a[2] * a[2] * p[2]);
+	temp[0] += (1 - cos(theta)) * (a[0] * a[0] * p[0] + a[0] * a[1] * p[1] + a[0] * a[2] * p[2]);
+	temp[1] += (1 - cos(theta)) * (a[0] * a[1] * p[0] + a[1] * a[1] * p[1] + a[1] * a[2] * p[2]);
+	temp[2] += (1 - cos(theta)) * (a[0] * a[2] * p[0] + a[1] * a[2] * p[1] + a[2] * a[2] * p[2]);
 
-	temp[0] += cos(theta)*p[0];
-	temp[1] += cos(theta)*p[1];
-	temp[2] += cos(theta)*p[2];
+	temp[0] += cos(theta) * p[0];
+	temp[1] += cos(theta) * p[1];
+	temp[2] += cos(theta) * p[2];
 
 	p[0] = temp[0];
 	p[1] = temp[1];
@@ -187,163 +193,163 @@ static void motion(int x, int y)
 void Leg(static int Leg, static int Knee, static int Side, int i)
 {
 	glPushMatrix();
-		glColor3f(0.0f, 0.0f, 0.6f);
-		glTranslatef(0.0, -0.5, 0.0);
-		if (i == 0)             // for right leg
-		{
-			glRotatef((GLfloat)Leg, -1.0, 0.0, 0.0);
-			glRotatef((GLfloat)Side, 0.0, 0.0, 1.0);
-		}
-		else if (i == 1)       // for left leg
-		{
-			glRotatef((GLfloat)Leg, 1.0, 0.0, 0.0);
-			glRotatef((GLfloat)Side, 0.0, 0.0, -1.0);
-		}
+	glColor3f(0.0f, 0.0f, 0.6f);
+	glTranslatef(0.0, -0.5, 0.0);
+	if (i == 0)             // for right leg
+	{
+		glRotatef((GLfloat)Leg, -1.0, 0.0, 0.0);
+		glRotatef((GLfloat)Side, 0.0, 0.0, 1.0);
+	}
+	else if (i == 1)       // for left leg
+	{
+		glRotatef((GLfloat)Leg, 1.0, 0.0, 0.0);
+		glRotatef((GLfloat)Side, 0.0, 0.0, -1.0);
+	}
 
-		glTranslatef(0.0, -0.5, 0.0);
+	glTranslatef(0.0, -0.5, 0.0);
 
-		glPushMatrix();
-			glTranslatef(0.3, 0.0, 0.0);   //LegRight
-			glScalef(0.4, 1.0, 0.3);
-			glutWireCube(1);
-		glPopMatrix();
+	glPushMatrix();
+	glTranslatef(0.3, 0.0, 0.0);   //LegRight
+	glScalef(0.4, 1.0, 0.3);
+	glutWireCube(1);
+	glPopMatrix();
 
-		glTranslatef(0.0, -0.5, 0.0);
-		if (i == 0)             // for right leg knee
-		{
-			glRotatef((GLfloat)Knee, 1.0, 0.0, 0.0);
-		}
-		else if (i == 1)       // for left leg knee
-		{
-			glRotatef((GLfloat)Knee, -1.0, 0.0, 0.0);
-		}
-		glTranslatef(0.0, -0.5, 0.0);
+	glTranslatef(0.0, -0.5, 0.0);
+	if (i == 0)             // for right leg knee
+	{
+		glRotatef((GLfloat)Knee, 1.0, 0.0, 0.0);
+	}
+	else if (i == 1)       // for left leg knee
+	{
+		glRotatef((GLfloat)Knee, -1.0, 0.0, 0.0);
+	}
+	glTranslatef(0.0, -0.5, 0.0);
 
-		glPushMatrix();
-			glTranslatef(0.3, -0.7, 0.0);   //FootRight
-			glScalef(0.4, 0.4, 0.3);
-			glutSolidCube(1);
-		glPopMatrix();
+	glPushMatrix();
+	glTranslatef(0.3, -0.7, 0.0);   //FootRight
+	glScalef(0.4, 0.4, 0.3);
+	glutSolidCube(1);
+	glPopMatrix();
 
-		glPushMatrix();
-			glTranslatef(0.3, 0.0, 0.0);   //KneeRigth
-			glScalef(0.4, 1.0, 0.3);
-			glutWireCube(1);
-		glPopMatrix();
+	glPushMatrix();
+	glTranslatef(0.3, 0.0, 0.0);   //KneeRigth
+	glScalef(0.4, 1.0, 0.3);
+	glutWireCube(1);
+	glPopMatrix();
 
 	glPopMatrix();
 }
 void Arm(static int Shoulder, static int Elbow, static int ShoulderF, int i)
 {
 	glPushMatrix();
-		glColor3f(1.0f, 1.0f, 1.0f);
-		glTranslatef(0.75, 1.5, 0.0);
-		if (i == 0)                   // 0 For the Right Arm
-		{
-			glRotatef((GLfloat)Shoulder, 0.0, 0.0, 1.0);
-			glRotatef((GLfloat)ShoulderF, -1.0, 0.0, 0.0);
-		}
-		else if (i == 1)            // 1 For the Left Arm 
-		{
-			glRotatef((GLfloat)Shoulder, 0.0, 0.0, -1.0);
-			glRotatef((GLfloat)ShoulderF, -1.0, 0.0, 0.0);
-		}
-		glTranslatef(-0.75, -1.5, 0.0);
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glTranslatef(0.75, 1.5, 0.0);
+	if (i == 0)                   // 0 For the Right Arm
+	{
+		glRotatef((GLfloat)Shoulder, 0.0, 0.0, 1.0);
+		glRotatef((GLfloat)ShoulderF, -1.0, 0.0, 0.0);
+	}
+	else if (i == 1)            // 1 For the Left Arm 
+	{
+		glRotatef((GLfloat)Shoulder, 0.0, 0.0, -1.0);
+		glRotatef((GLfloat)ShoulderF, -1.0, 0.0, 0.0);
+	}
+	glTranslatef(-0.75, -1.5, 0.0);
 
-		glPushMatrix();
-		glTranslatef(0.75, 1.0, 0.0);   //ShoulderRight
-		glScalef(0.3, 1.0, 0.3);
-		glutWireCube(1);
-		glPopMatrix();
-
-
-		glTranslatef(0.0, 0.5, 0.0);
-		if (i == 0)
-		{
-			glRotatef((GLfloat)Elbow, 1.0, 0.0, 0.0);
-		}
-		else if (i == 1)
-		{
-			glRotatef((GLfloat)Elbow, -1.0, 0.0, 0.0);
-		}
-
-		glTranslatef(0.0, 0.5, 0.0);
-
-		glPushMatrix();
-			glTranslatef(0.75, -1, 0.0);   //Elbowright
-			glScalef(0.3, 1.0, 0.3);
-			glutWireCube(1);
-		glPopMatrix();
+	glPushMatrix();
+	glTranslatef(0.75, 1.0, 0.0);   //ShoulderRight
+	glScalef(0.3, 1.0, 0.3);
+	glutWireCube(1);
+	glPopMatrix();
 
 
-		glPushMatrix();
-			glTranslatef(0.8705, -1.6, -0.1);                   //fingerbase5rRight
-			glScalef(0.075, 0.2, 0.1);
-			glutWireCube(1);
-		glPopMatrix();
+	glTranslatef(0.0, 0.5, 0.0);
+	if (i == 0)
+	{
+		glRotatef((GLfloat)Elbow, 1.0, 0.0, 0.0);
+	}
+	else if (i == 1)
+	{
+		glRotatef((GLfloat)Elbow, -1.0, 0.0, 0.0);
+	}
 
-		glPushMatrix();
-			glTranslatef(0.8705, -1.6, 0.1);                   //fingerbaserRight
-			glScalef(0.075, 0.2, 0.1);
-			glutWireCube(1);
-		glPopMatrix();
+	glTranslatef(0.0, 0.5, 0.0);
 
-		glPushMatrix();
-			glTranslatef(0.7945, -1.6, 0.1);                   //fingerbase3rRight
-			glScalef(0.075, 0.2, 0.1);
-			glutWireCube(1);
-		glPopMatrix();
-
-		glPushMatrix();
-			glTranslatef(0.7215, -1.6, 0.1);                   //fingerbase2rRight
-			glScalef(0.075, 0.2, 0.1);
-			glutWireCube(1);
-		glPopMatrix();
-
-		glPushMatrix();
-
-		glTranslatef(0.685, -0.515, 0.0);
-		glRotatef((GLfloat)fingerBaseR1, 1.0, 0.0, 0.0);
-		glTranslatef(-0.685, 0.515, 0.0);
-
-		glPushMatrix();
-			glTranslatef(0.6475, -1.6, 0.1);   //fingerbase1Right
-			glScalef(0.075, 0.2, 0.1);
-			glutWireCube(1);
-		glPopMatrix();
+	glPushMatrix();
+	glTranslatef(0.75, -1, 0.0);   //Elbowright
+	glScalef(0.3, 1.0, 0.3);
+	glutWireCube(1);
+	glPopMatrix();
 
 
-		glTranslatef(0.6475, -1.75, 0.1);                   //finger1Right
-		glScalef(0.075, 0.1, 0.1);
-		glutWireCube(1);
+	glPushMatrix();
+	glTranslatef(0.8705, -1.6, -0.1);                   //fingerbase5rRight
+	glScalef(0.075, 0.2, 0.1);
+	glutWireCube(1);
+	glPopMatrix();
 
-		glPopMatrix();
+	glPushMatrix();
+	glTranslatef(0.8705, -1.6, 0.1);                   //fingerbaserRight
+	glScalef(0.075, 0.2, 0.1);
+	glutWireCube(1);
+	glPopMatrix();
 
-		/////////////////////
+	glPushMatrix();
+	glTranslatef(0.7945, -1.6, 0.1);                   //fingerbase3rRight
+	glScalef(0.075, 0.2, 0.1);
+	glutWireCube(1);
+	glPopMatrix();
 
-		glPushMatrix();
-			glTranslatef(0.8705, -1.75, -0.1);                   //finger5rRight
-			glScalef(0.075, 0.1, 0.1);
-			glutWireCube(1);
-		glPopMatrix();
+	glPushMatrix();
+	glTranslatef(0.7215, -1.6, 0.1);                   //fingerbase2rRight
+	glScalef(0.075, 0.2, 0.1);
+	glutWireCube(1);
+	glPopMatrix();
 
-		glPushMatrix();
-			glTranslatef(0.8705, -1.75, 0.1);                   //finger4Right
-			glScalef(0.075, 0.1, 0.1);
-			glutWireCube(1);
-		glPopMatrix();
+	glPushMatrix();
 
-		glPushMatrix();
-			glTranslatef(0.7945, -1.75, 0.1);                   //finger3Right
-			glScalef(0.075, 0.1, 0.1);
-			glutWireCube(1);
-		glPopMatrix();
+	glTranslatef(0.685, -0.515, 0.0);
+	glRotatef((GLfloat)fingerBaseR1, 1.0, 0.0, 0.0);
+	glTranslatef(-0.685, 0.515, 0.0);
 
-		glPushMatrix();
-			glTranslatef(0.7215, -1.75, 0.1);                   //finger2Right
-			glScalef(0.075, 0.1, 0.1);
-			glutWireCube(1);
-		glPopMatrix();
+	glPushMatrix();
+	glTranslatef(0.6475, -1.6, 0.1);   //fingerbase1Right
+	glScalef(0.075, 0.2, 0.1);
+	glutWireCube(1);
+	glPopMatrix();
+
+
+	glTranslatef(0.6475, -1.75, 0.1);                   //finger1Right
+	glScalef(0.075, 0.1, 0.1);
+	glutWireCube(1);
+
+	glPopMatrix();
+
+	/////////////////////
+
+	glPushMatrix();
+	glTranslatef(0.8705, -1.75, -0.1);                   //finger5rRight
+	glScalef(0.075, 0.1, 0.1);
+	glutWireCube(1);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(0.8705, -1.75, 0.1);                   //finger4Right
+	glScalef(0.075, 0.1, 0.1);
+	glutWireCube(1);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(0.7945, -1.75, 0.1);                   //finger3Right
+	glScalef(0.075, 0.1, 0.1);
+	glutWireCube(1);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(0.7215, -1.75, 0.1);                   //finger2Right
+	glScalef(0.075, 0.1, 0.1);
+	glutWireCube(1);
+	glPopMatrix();
 
 
 	glPopMatrix();
@@ -351,84 +357,363 @@ void Arm(static int Shoulder, static int Elbow, static int ShoulderF, int i)
 void Chest(void)
 {
 	glPushMatrix();
-		glColor3f(1.0f, 0.5f, 0.0f);
-		glTranslatef(0.0, 0.5, 0.0);   //Chest
-		glScalef(1.0, 2.0, 0.5);
-		glutSolidCube(1);
+	glColor3f(1.0f, 0.5f, 0.0f);
+	glTranslatef(0.0, 0.5, 0.0);   //Chest
+	glScalef(1.0, 2.0, 0.5);
+	glutSolidCube(1);
 	glPopMatrix();
 
 }
 void Head(void)
 {
 	glPushMatrix();
-		glColor3f(3.0f, 0.65, 2.0f);
-		glRotatef((GLfloat)head, 0.0, 1.0, 0.0);
+	glColor3f(3.0f, 0.65, 2.0f);
+	glRotatef((GLfloat)head, 0.0, 1.0, 0.0);
 
-		glPushMatrix();
-			glTranslatef(0.0, 2.0, 0.0);
-			glutWireSphere(0.3, 16, 16);
-		glPopMatrix();
+	glPushMatrix();
+	glTranslatef(0.0, 2.0, 0.0);
+	glutWireSphere(0.3, 16, 16);
+	glPopMatrix();
 
 	glPopMatrix();
 
 }
+void drawRoom(void)
+{
+	//floor
+	
+	glBegin(GL_QUADS);
+	glColor3f(0.7f, 0.7f, 0.7f);
+	glVertex3f(-10.0f, -2.9f, -10.0f);
+	glVertex3f(-10.0f, -2.9f, 10.0f);
+	glVertex3f(10.0f, -2.9f, 10.0f);
+	glVertex3f(10.0f, -2.9f, -10.0f);
+	glEnd();
 
+	//wall
+	glBegin(GL_QUADS);
+	glColor3f(0.9294f, 0.9216f, 0.8353f);
+	
+	glVertex3f(-10.0f, -2.9f, -10.0f);
+	glVertex3f(-10.0f, 7.0f, -10.0f);
+	glVertex3f(10.0f, 7.0f, -10.0f);
+	glVertex3f(10.0f, -2.9f, -10.0f);
+	glEnd();
+
+	//wall
+	
+	glBegin(GL_QUADS);
+	glColor3f(1.0f, 0.851f, 0.702f);
+	glVertex3f(-10.0f, -2.9f, -10.0f);
+	glVertex3f(-10.0f, 7.0f, -10.0f);
+	glVertex3f(-10.0f, 7.0f, 10.0f);
+	glVertex3f(-10.0f, -2.9f, 10.0f);
+	glEnd();
+
+	//wall with door
+	
+	glBegin(GL_QUADS);
+	glColor3f(1.0f, 0.851f, 0.702f);
+	glVertex3f(-10.0f, -2.9f, 10.0f);
+	glVertex3f(-10.0f, 7.0f, 10.0f);
+	glVertex3f(-6.0f, 7.0f, 10.0f);
+	glVertex3f(-6.0f, -2.9f, 10.0f);
+	glEnd();
+
+	
+	glBegin(GL_QUADS);
+	glColor3f(1.0f, 0.851f, 0.702f);
+	glVertex3f(-3.0f, -2.9f, 10.0f);
+	glVertex3f(-3.0f, 7.0f, 10.0f);
+	glVertex3f(10.0f, 7.0f, 10.0f);
+	glVertex3f(10.0f, -2.9f, 10.0f);
+	glEnd();
+
+	
+	glBegin(GL_QUADS);
+	glColor3f(1.0f, 0.851f, 0.702f);
+	glVertex3f(-6.0f, 7.0f, 10.0f);
+	glVertex3f(-6.0f, 5.0f, 10.0f);
+	glVertex3f(-3.0f, 5.0f, 10.0f);
+	glVertex3f(-3.0f, 7.0f, 10.0f);
+	glEnd();
+
+	glLineWidth(10.0f);
+	glBegin(GL_LINES);
+	glColor3f(0.4f, 0.2f, 0.0f);
+	
+	glVertex3f(-6.0f, 5.0f, 10.01f);
+	glVertex3f(-3.0f, 5.0f, 10.01f);
+	glEnd();
+
+	glBegin(GL_LINES);
+	glVertex3f(-6.0f, 5.0f, 10.01f);
+	glVertex3f(-6.0f, -2.9f, 10.01f);
+	glEnd();
+
+	glBegin(GL_LINES);
+	glVertex3f(-3.0f, -2.9f, 10.01f);
+	glVertex3f(-3.0f, 5.0f, 10.01f);
+	glEnd();
+	//wall
+	
+	glBegin(GL_QUADS);
+	glColor3f(1.0f, 0.851f, 0.702f);
+	glVertex3f(10.0f, -2.9f, -10.0f);
+	glVertex3f(10.0f, 7.0f, -10.0f);
+	glVertex3f(10.0f, 7.0f, 10.0f);
+	glVertex3f(10.0f, -2.9f, 10.0f);
+	glEnd();
+
+	//ceiling
+	
+	glBegin(GL_QUADS);
+	glColor3f(0.95f, 0.95f, 0.95f);
+	glVertex3f(-10.0f, 7.0f, -10.0f);
+	glVertex3f(10.0f, 7.0f, -10.0f);
+	glVertex3f(10.0f, 7.0f, 10.0f);
+	glVertex3f(-10.0f, 7.0f, 10.0f);
+	glEnd();
+
+	//Floor pattern
+	glPushMatrix();
+	
+	glColor3f(0.149f, 0.149f, 0.149f);
+	glLineWidth(3.0f);
+	for (int i = 0; i < 20; i += 2)
+	{
+		glBegin(GL_LINES);
+		glVertex3f(-10.0f + i, -2.9f, -10.01f);
+		glVertex3f(-10.0f + i, -2.9f, 10.01f);
+		glEnd();
+	}
+	for (int i = 0; i < 20; i += 2)
+	{
+		glBegin(GL_LINES);
+		
+		glVertex3f(-10.0f, -2.9f, -10.01f + i);
+		glVertex3f(10.0f, -2.9f, -10.01f + i);
+		glEnd();
+	}
+	glPopMatrix();
+
+	
+	glBegin(GL_QUADS);
+	glColor3f(0.6f, 0.7333f, 1.0f);
+	glVertex3f(-9.99f, 2.0f, 6.0f);
+	glVertex3f(-9.99f, 5.0f, 6.0f);
+	glVertex3f(-9.99f, 5.0f, 2.0f);
+	glVertex3f(-9.99f, 2.0f, 2.0f);
+	glEnd();
+	glLineWidth(10.0f);
+	glPushMatrix();
+	
+	glBegin(GL_LINES);
+	glColor3f(0.149f, 0.149f, 0.149f);
+	
+	//left
+	glVertex3f(-9.98f, 2.0f, 6.0f);
+	glVertex3f(-9.98f, 5.0f, 6.0f);
+	//top
+	glVertex3f(-9.98f, 5.0f, 6.0f);
+	glVertex3f(-9.98f, 5.0f, 2.0f);
+	//right
+	glVertex3f(-9.98f, 2.0f, 2.0f);
+	glVertex3f(-9.98f, 5.0f, 2.0f);
+	//bottom
+	glVertex3f(-9.98f, 2.0f, 6.0f);
+	glVertex3f(-9.98f, 2.0f, 2.0f);
+	glEnd();
+	glPopMatrix();
+	//Cross
+	glPushMatrix();
+
+	glLineWidth(3.0f);
+	glBegin(GL_LINES);
+	
+	glVertex3f(-9.98f, 2.0f, 4.0f);
+	glVertex3f(-9.98f, 5.0f, 4.0f);
+
+	glVertex3f(-9.98f, 3.5f, 6.0f);
+	glVertex3f(-9.98f, 3.5f, 2.0f);
+	glEnd();
+	glPopMatrix();
+
+	//glPushAttrib(GL_TEXTURE_BIT);
+
+	//glDisable(GL_TEXTURE_2D);
+	////glColor3f(0.6f, 0.6f, 0.6f);
+	//glBegin(GL_QUADS);
+	///* Floor */
+	//glPushMatrix();
+	//glColor3f(0.6f, 0.6f, 0.6f);
+	//glNormal3f(10.0f, 2.9f, 10.0f);
+	//glVertex3f(-10.0f, -2.9f, -15.0f);
+	//glVertex3f(-10.0f, -2.9f, 15.0f);
+	//glVertex3f(10.0f, -2.9f, 15.0f);
+	//glVertex3f(10.0f, -2.9f, -15.0f);
+	//glPopMatrix();
+	///* Ceiling */
+	//glPushMatrix();
+	//glColor3f(0.4f, 0.6f, 0.6f);
+	//glNormal3f(10.0f, -1.0f, 10.0f);
+	//glVertex3f(-10.0f, 7.0f, 15.0f);
+	//glVertex3f(-10.0f, 7.0f, -15.0f);
+	//glVertex3f(10.0f, 7.0f, -15.0f);
+	//glVertex3f(10.0f, 7.0f, 15.0f);
+	//glPopMatrix();
+	///* Back Wall */
+	//glPushMatrix();
+	//glColor3f(0.6f, 0.4f, 0.6f);
+	//glNormal3f(0.0f, 0.0f, 1.0f);
+	//glVertex3f(-10.0f, 7.0f, 15.0f);
+	//glVertex3f(-10.0f, -2.9f, 15.0f);
+	//glVertex3f(10.0f, -2.9f, 15.0f);
+	//glVertex3f(10.0f, 7.0f, 15.0f);
+	//glPopMatrix();
+	///* Left Wall */
+	//glPushMatrix();
+	//glColor3f(0.6f, 0.6f, 0.4f);
+	//glNormal3f(1.0f, 0.0f, 0.0f);
+	//glVertex3f(-10.0f, 7.0f, 15.0f);
+	//glVertex3f(-10.0f, -2.9f, 15.0f);
+	//glVertex3f(-10.0f, -2.9f, -15.0f);
+	//glVertex3f(-10.0f, 7.0f, -15.0f);
+	//glPopMatrix();
+	///* Right Wall */
+	//glPushMatrix();
+	//glColor3f(0.6f, 0.6f, -0.6f);
+	//glNormal3f(-1.0f, 0.0f, 0.0f);
+	//glVertex3f(10.0f, 7.0f, -15.0f);
+	//glVertex3f(10.0f, -2.9f, -15.0f);
+	//glVertex3f(10.0f, -2.9f, 15.0f);
+	//glVertex3f(10.0f, 7.0f, 15.0f);
+	//glPopMatrix();
+	//glEnd();
+
+	//
+	/*glEnable(GL_LIGHTING);
+	//glDisable(GL_LIGHTING);
+	glBegin(GL_QUADS);
+	glVertex3f(-18.0, 0.0, 27.0);
+	glVertex3f(27.0, 0.0, 27.0);
+	glVertex3f(27.0, 0.0, -18.0);
+	glVertex3f(-18.0, 0.0, -18.0);
+	glEnd();*/
+	//glEnable(GL_LIGHTING);
+}
+//void drawFloor(GLuint texture, float f)
+//{
+//	float f = 5.0;
+//	glEnable(GL_TEXTURE_2D);
+//	//glBindTexture(GL_TEXTURE_2D, texture);
+//
+//
+//	glPushMatrix();
+//
+//	for (float a = -10.0; a <= 170.0; a = a + 10.0)
+//	{
+//		glBegin(GL_QUADS);
+//		glTexCoord2f(0.0, 0.0);
+//		glVertex3f(0.0 + a, -2.9, 10.0);
+//		glTexCoord2f(0.0, f);
+//		glVertex3f(0.0 + a, -2.9, 0.0);
+//		glTexCoord2f(f, f);
+//		glVertex3f(10.0 + a, -2.9, 0.0);
+//		glTexCoord2f(f, 0.0);
+//		glVertex3f(10.0 + a, -2.9, 10.0);
+//		glEnd();
+//	}
+//
+//	for (float b = -10.0; b <= 320.0; b += 10.0)
+//	{
+//		for (float a = -10.0; a <= 170.0; a = a + 10.0)
+//		{
+//			glBegin(GL_QUADS);
+//			glTexCoord2f(0.0, 0.0);
+//			glVertex3f(0.0 + a, 7.0, -(b - 10.0));
+//			glTexCoord2f(0.0, f);
+//			glVertex3f(0.0 + a, 7.0, -b);
+//			glTexCoord2f(f, f);
+//			glVertex3f(10.0 + a, 7.0, -b);
+//			glTexCoord2f(f, 0.0);
+//			glVertex3f(10.0 + a, 7.0, -(b - 10.0));
+//			glEnd();
+//
+//		}
+//	}
+//
+//	glPopMatrix();
+//
+//	glDisable(GL_TEXTURE_2D);
+//
+//	//LoadTexture::FreeCreatedTexture(texture);
+//}
 void display(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 	glLoadIdentity();
+	//glFrustum(-2, 2, -1.5, 1.5, 1, 40);
+
 	gluLookAt(eye[0], eye[1], eye[2], center[0], center[1], center[2], up[0], up[1], up[2]);
-
+	
+	drawRoom();
 	glPushMatrix();
-		glRotatef(angle2, 1.0, 0.0, 0.0);
-		glRotatef(angle, 0.0, 1.0, 0.0);
+	glLineWidth(1.0f);
+	glRotatef(angle2, 1.0, 0.0, 0.0);
+	glRotatef(angle, 0.0, 1.0, 0.0);
 
-		glRotatef((GLfloat)Body, 0.0, 1.0, 0.0);
+	glRotatef((GLfloat)Body, 0.0, 1.0, 0.0);
 
-		Chest();
+	Chest();
 
-		glPushMatrix();                // For The Right Arm
-			Arm(ArmR, elbowR, ArmRF, 0);
-		glPopMatrix();
+	glPushMatrix();                // For The Right Arm
+	Arm(ArmR, elbowR, ArmRF, 0);
+	glPopMatrix();
 
-		glPushMatrix();             // For The Left Arm
-			glRotatef(180, 0.0, 1.0, 0.0);
-			Arm(ArmL, elbowL, ArmLF, 1);
-		glPopMatrix();
+	glPushMatrix();             // For The Left Arm
+	glRotatef(180, 0.0, 1.0, 0.0);
+	Arm(ArmL, elbowL, ArmLF, 1);
+	glPopMatrix();
 
-		glPushMatrix();                // For The Right Leg
-			Leg(LegR, KneeR, LegRM, 0);
-		glPopMatrix();
+	glPushMatrix();                // For The Right Leg
+	Leg(LegR, KneeR, LegRM, 0);
+	glPopMatrix();
 
-		glPushMatrix();             // For The Left Leg
-			glRotatef(180, 0.0, 1.0, 0.0);
-			Leg(LegL, KneeL, LegLM, 1);
-		glPopMatrix();
+	glPushMatrix();             // For The Left Leg
+	glRotatef(180, 0.0, 1.0, 0.0);
+	Leg(LegL, KneeL, LegLM, 1);
+	glPopMatrix();
 
-		Head();
-		
-		//Neck
-		glPushMatrix();
-		glTranslatef(0.0, 1.65, 0.0);
-		glColor3f(1.0, 1.0, 1.0);
-		glScalef(0.25, 0.25, 0.25);
-		glutWireCube(1.0);
-		glPopMatrix();
+	Head();
 
-		glutSwapBuffers();
+	//Neck
+	glPushMatrix();
+	glTranslatef(0.0, 1.65, 0.0);
+	glColor3f(1.0, 1.0, 1.0);
+	glScalef(0.25, 0.25, 0.25);
+	glutWireCube(1.0);
+	glPopMatrix();
+
+	glutSwapBuffers();
 
 	glPopMatrix();
+	glFlush();
+
 }
+
+
 
 void reshape(int w, int h)
 {
 	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(85.0, (GLfloat)w / (GLfloat)h, 1.0, 20.0);
+	glFrustum(-5.0, 5.0, -5.0, 5.0, 5.0, 100.0);
+	//gluPerspective(85.0, (GLfloat)w / (GLfloat)h, 1.0, 20.0);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	glTranslatef(0.0, 0.0, -5.0);
+	//glTranslatef(0.0, 0.0, -5.0);
 }
 
 void specialKeys(int key, int x, int y)
@@ -669,7 +954,7 @@ void keyboard(unsigned char key, int x, int y)
 	}
 }
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
@@ -678,6 +963,7 @@ int main(int argc, char **argv)
 	glutCreateWindow(argv[0]);
 	init();
 	glutDisplayFunc(display);
+	//glutDisplayFunc(redraw);
 	glutMouseFunc(mouse);
 	glutMotionFunc(motion);
 	glutReshapeFunc(reshape);
