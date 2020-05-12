@@ -1,12 +1,21 @@
 #include <GL/glut.h>
 #include <stdlib.h>
+//#include "glm.h"
+//#include "imageloader.h"
 #include <math.h>
+#include <stdio.h> 
+#include <windows.h>
 
 static int ArmR = 0, ArmRF = 0, ArmLF = 0, ArmL = 0, elbowR = 0, elbowL = 0;
 static int LegR = 0, LegL = 0, LegRM = 0, LegLM = 0, KneeR = 0, KneeL = 0;
 static int fingerBaseR1 = 0, fingerBaseR2 = 0, fingerBaseR3 = 0, fingerBase4R = 0, fingerBase5R = 0;
 static int fingerBaseL1 = 0, fingerBaseL2 = 0, fingerBaseL3 = 0, fingerBase4L = 0, fingerBase5L = 0;
 static int Body = 0, head = 0;
+
+static int window;
+static int menu_id;
+static int submenu1, submenu2, submenu3, submenu4, submenu5, submenu6, submenu7, submenu8;
+static int value = 0;
 
 static int moving, startx, starty;
 GLfloat angle = 0.0;   /* in degrees */
@@ -25,6 +34,21 @@ GLfloat lightOnePosition[] = { -1.0, 1.0, 1.0, 0.0 };
 GLfloat lightOneColor[] = { 0.6, 0.3, 0.2, 1.0 }; /* red-tinted */
 GLdouble bodyWidth = 3.0;
 int useStencil = 0;  /* Initially, allow the artifacts. */
+/////////////////////////////////////
+
+// RGBA
+GLfloat light_ambient[] = { 0.0, 0.0, 0.0, 0.0 };
+GLfloat light_diffuse[] = { 0.5, 0.5, 0.5,1.0 };
+GLfloat light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+// x , y, z, w
+GLfloat light_position[] = { 0.5,5.0, 0.0, 1.0 };
+GLfloat lightPos1[] = { -0.5,-5.0,-2.0, 1.0 };
+// Material Properties
+GLfloat mat_amb_diff[] = { 0.643, 0.753, 0.934, 1.0 };
+GLfloat mat_specular[] = { 0.0, 0.0, 0.0, 1.0 };
+GLfloat shininess[] = { 100.0 };
+
+//GLuint texture; //the array for our texture
 
 void init(void)
 {
@@ -380,6 +404,8 @@ void Head(void)
 }
 void drawRoom(void)
 {
+
+	/////////////////////////
 	//floor
 	
 	glBegin(GL_QUADS);
@@ -389,6 +415,8 @@ void drawRoom(void)
 	glVertex3f(10.0f, -2.9f, 10.0f);
 	glVertex3f(10.0f, -2.9f, -10.0f);
 	glEnd();
+
+	/////////////////////////////
 
 	//wall
 	glBegin(GL_QUADS);
@@ -539,6 +567,7 @@ void drawRoom(void)
 	glEnd();
 	glPopMatrix();
 
+	//////////////////////////////////////////////
 	//glPushAttrib(GL_TEXTURE_BIT);
 
 	//glDisable(GL_TEXTURE_2D);
@@ -649,6 +678,115 @@ void drawRoom(void)
 //
 //	//LoadTexture::FreeCreatedTexture(texture);
 //}
+
+
+void menu(int num) {
+	if (num == 0) {
+		glutDestroyWindow(window);
+		exit(0);
+	}
+	else {
+		value = num;
+	}
+	glutPostRedisplay();
+}
+void createMenu(void) {
+
+	submenu1 = glutCreateMenu(menu);
+	glutAddMenuEntry("Football field", 1);
+	glutAddMenuEntry("Yellow Sand", 2);
+	glutAddMenuEntry("Red Sand", 3);
+	glutAddMenuEntry("Track", 4);
+
+	menu_id = glutCreateMenu(menu);
+
+	glutAddSubMenu("Change Floor Texture", submenu1);
+
+	glutAttachMenu(GLUT_RIGHT_BUTTON);
+}
+
+//GLuint loadTexture(Image* image) {
+//	GLuint textureId;
+//	glGenTextures(1, &textureId); //Make room for our texture
+//	glBindTexture(GL_TEXTURE_2D, textureId); //Tell OpenGL which texture to edit
+//	//Map the image to the texture
+//	glTexImage2D(GL_TEXTURE_2D,                //Always GL_TEXTURE_2D
+//		0,                            //0 for now
+//		GL_RGB,                       //Format OpenGL uses for image
+//		image->width, image->height,  //Width and height
+//		0,                            //The border of the image
+//		GL_RGB, //GL_RGB, because pixels are stored in RGB format
+//		GL_UNSIGNED_BYTE, //GL_UNSIGNED_BYTE, because pixels are stored
+//						  //as unsigned numbers
+//		image->pixels);               //The actual pixel data
+//	return textureId; //Returns the id of the texture
+//}
+//
+//GLuint _textureId; //The id of the texture
+//GLuint _textureId1; //The id of the texture
+//
+//void initRendering() {
+//	Image* image = loadBMP("wood.bmp");
+//	_textureId = loadTexture(image);
+//	delete image;
+//	// Turn on the power
+//	glEnable(GL_LIGHTING);
+//	// Flip light switch
+//	glEnable(GL_LIGHT0);
+//	glEnable(GL_LIGHT1);
+//	// assign light parameters
+//	glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+//	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+//	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+//	glLightfv(GL_LIGHT1, GL_AMBIENT, light_ambient);
+//	glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse);
+//	glLightfv(GL_LIGHT1, GL_SPECULAR, light_specular);
+//	// Material Properties         
+//	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, mat_amb_diff);
+//	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+//	glMaterialfv(GL_FRONT, GL_SHININESS, shininess);
+//	GLfloat lightColor1[] = { 1.0f, 1.0f,  1.0f, 1.0f };
+//	glLightfv(GL_LIGHT1, GL_DIFFUSE, lightColor1);
+//	glLightfv(GL_LIGHT1, GL_POSITION, lightPos1);
+//	glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor1);
+//	glEnable(GL_NORMALIZE);
+//	//Enable smooth shading
+//	glShadeModel(GL_SMOOTH);
+//	// Enable Depth buffer
+//	glEnable(GL_DEPTH_TEST);
+//
+//	//     	startList = glGenLists(4);
+//	// glNewList(startList, GL_COMPILE);
+//	// glRotatef(90, 0, 1, 0);
+//	// 	glScalef(1, 1.2, 1);
+//	// 	glTranslatef(1.7, -0.05, -.3);
+//	// pmodel1 = pmodel4;
+//	// drawmodel();
+//	// glEndList();
+//
+//	// glNewList(startList + 1, GL_COMPILE);
+//	// 	glRotatef(270, 0, 1, 0);
+//	// 	glScalef(1, 1.2, 1);
+//	// 	glTranslatef(-1.7, -0.05, -.3);
+//	// pmodel1 = pmodel4;
+//	// drawmodel();
+//	// glEndList();
+//
+//	// glNewList(startList + 2, GL_COMPILE);
+//	// glTranslatef(0.3, -.1, 0.075);
+//	// pmodel1 = pmodel2;
+//	// drawmodel();
+//	// glEndList();
+//
+//	// glNewList(startList + 3, GL_COMPILE);
+//	// glTranslatef(-0.6, 0, 0.0);
+//	// pmodel1 = pmodel2;
+//	// drawmodel();	
+//	// glEndList();
+//
+//
+//}
+
 void display(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -695,7 +833,58 @@ void display(void)
 	glutWireCube(1.0);
 	glPopMatrix();
 
+	/////////////////////////////////////////////
+	////floor
+	//glPushMatrix();
+	//glEnable(GL_TEXTURE_2D);
+	//glBindTexture(GL_TEXTURE_2D, _textureId);
+
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	//glBegin(GL_QUADS);
+
+	//glNormal3f(0.0, -1.0, 0.0);
+	//glTexCoord2f(0.0f, 0.0f);
+	//glVertex3f(-0.5, -0.25, 2);
+	//glTexCoord2f(5.0f, 0.0f);
+	//glVertex3f(0.5, -0.25, 2);
+	//glTexCoord2f(5.0f, 20.0f);
+	//glVertex3f(0.5, -0.25, -2);
+	//glTexCoord2f(0.0f, 20.0f);
+	//glVertex3f(-0.5, -0.25, -2);
+	//glEnd();
+	//glDisable(GL_TEXTURE_2D);
+
+	//glPopMatrix();
+
+
+	///////////////////////////////
+
+
 	glutSwapBuffers();
+
+
+	if (value == 1) {
+		printf("Football field\n");
+		value = 0;
+
+	}
+	else if (value == 2) {
+		printf("Yellow Sand\n");
+		value = 0;
+
+	}
+	else if (value == 3) {
+		printf("Red Sand\n");
+		value = 0;
+	}
+	else if (value == 4) {
+		printf("Track\n");
+		value = 0;
+	}
 
 	glPopMatrix();
 	glFlush();
@@ -969,6 +1158,11 @@ int main(int argc, char** argv)
 	glutReshapeFunc(reshape);
 	glutSpecialFunc(specialKeys);
 	glutKeyboardFunc(keyboard);
+	createMenu();
+
+
+
+
 	glutMainLoop();
 	return 0;
 }
